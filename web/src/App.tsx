@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
+import type { FormEvent } from 'react';
 import './App.css';
 
-// definindo a "cara" do dado 
 interface Product {
   id: string;
   name: string;
@@ -11,50 +11,171 @@ interface Product {
 
 function App() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [name, setName] = useState('');
+  const [cost, setCost] = useState('');
+  const [shipping, setShipping] = useState('');
+  const [tax, setTax] = useState('60');
+  const [margin, setMargin] = useState('30');
+  const [exchange, setExchange] = useState('6.00');
 
-  // useEffect: "Assim que a tela carregar, faça isso..."
+  const fetchProducts = () => {
+    fetch('http://localhost:3000/products')
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((error) => console.error("Erro ao buscar:", error));
+  };
+
   useEffect(() => {
-    fetch('http://localhost:3000/products') // Bate na API
-      .then((response) => response.json())  // Transforma a resposta em JSON
-      .then((data) => setProducts(data))    // Guarda os dados no estado
-      .catch((error) => console.error('Erro ao buscar produtos:', error));
+    fetchProducts();
   }, []);
 
-  return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>📦 DropManager</h1>
-      <p>Gerenciamento de Produtos Importados</p>
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
 
-      {/* 3. A Lista de Produtos */}
-      <div style={{ marginTop: '20px' }}>
-        {products.length === 0 ? (
-          <p>Carregando produtos...</p>
-        ) : (
-          products.map((product) => (
-            <div 
-              key={product.id} 
-              style={{ 
-                border: '1px solid #444', 
-                padding: '15px', 
-                marginBottom: '10px', 
-                borderRadius: '8px',
-                backgroundColor: '#2a2a2a',
-                color: 'white'
-              }}
-            >
-              <h3>{product.name}</h3>
-              <p>Preço Final Sugerido: 
-                <strong style={{ color: '#4caf50', marginLeft: '5px' }}>
-                  R$ {Number(product.finalPriceBrl).toFixed(2)}
-                </strong>
-              </p>
-              <small style={{ color: '#aaa' }}>
-                Custo USD: ${product.costPriceUsd}
-              </small>
-            </div>
-          ))
-        )}
-      </div>
+    const payload = {
+      name,
+      costPriceUsd: Number(cost),
+      shippingCostUsd: Number(shipping),
+      taxRate: Number(tax),
+      desiredMargin: Number(margin),
+      exchangeRate: Number(exchange)
+    };
+
+    try {
+      const response = await fetch('http://localhost:3000/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        alert('Produto cadastrado com sucesso!');
+        fetchProducts();
+        setName('');
+        setCost('');
+        setShipping('');
+      } else {
+        alert('Erro ao cadastrar. Verifique os dados.');
+      }
+    } catch (error) {
+      console.error("Erro ao salvar:", error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Tem certeza que deseja excluir este produto?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3000/products/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        fetchProducts();
+      } else {
+        alert("Erro ao excluir.");
+      }
+    } catch (error) {
+      console.error("Erro:", error);
+      alert("Erro de conexão.");
+    }
+  };
+
+  return (
+    <div>
+      {}
+      <header className="app-header">
+        <h1 className="app-title">
+          <span>📦</span> DropManager
+        </h1>
+      </header>
+
+      {}
+      <div className="main-container">
+        
+        <div className="content-grid">
+          
+          {}
+          <div className="card">
+            <h2 style={{ marginTop: 0 }}>Novo Produto</h2>
+            <form onSubmit={handleSubmit} className="form-grid">
+              
+              <div className="form-group">
+                <label>Nome do Produto:</label>
+                <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Smartwatch X8" required />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div className="form-group">
+                  <label>Custo (USD):</label>
+                  <input type="number" step="0.01" value={cost} onChange={e => setCost(e.target.value)} required />
+                </div>
+                <div className="form-group">
+                  <label>Frete (USD):</label>
+                  <input type="number" step="0.01" value={shipping} onChange={e => setShipping(e.target.value)} required />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div className="form-group">
+                  <label>Taxa Imp. (%):</label>
+                  <input type="number" value={tax} onChange={e => setTax(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>Margem (%):</label>
+                  <input type="number" value={margin} onChange={e => setMargin(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Cotação Dólar (R$):</label>
+                <input type="number" step="0.01" value={exchange} onChange={e => setExchange(e.target.value)} />
+              </div>
+
+              <button type="submit" className="btn-success">
+                CALCULAR E SALVAR
+              </button>
+            </form>
+          </div>
+
+          {}
+          <div>
+            <h2 style={{ marginTop: 0 }}>Lista de Produtos Cadastrados ({products.length})</h2>
+            
+            {products.length === 0 ? (
+                <p style={{ color: '#aaa' }}>Nenhum produto cadastrado ainda.</p>
+            ) : (
+              <div style={{ display: 'grid', gap: '10px' }}>
+                {products.map((product) => (
+                  <div key={product.id} className="product-item">
+                    <div>
+                      <strong style={{ fontSize: '1.1em', display: 'block' }}>{product.name}</strong>
+                      <small style={{ color: '#aaa' }}>Custo USD: ${product.costPriceUsd}</small>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <span style={{ color: '#4caf50', fontWeight: 'bold', fontSize: '1.2em' }}>
+                        R$ {Number(product.finalPriceBrl).toFixed(2)}
+                      </span>
+                      
+                      <button 
+                        onClick={() => handleDelete(product.id)}
+                        className="btn-delete"
+                        title="Excluir Produto"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+        </div> 
+      </div> 
     </div>
   );
 }
