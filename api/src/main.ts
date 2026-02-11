@@ -8,8 +8,8 @@ async function bootstrap() {
   app.enableCors();
 
   app.useGlobalPipes(new ValidationPipe({
-    whitelist: true, // Remove campos que não estão no DTO (segurança)
-    forbidNonWhitelisted: true, // Avisa erro se mandarem lixo extra
+    whitelist: true, 
+    forbidNonWhitelisted: true, 
   }));
   
   await app.listen(process.env.PORT ?? 3000);
