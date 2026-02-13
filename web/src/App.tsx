@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import './App.css';
+import api from './services/api'; 
 
 interface Product {
   id: string;
@@ -19,9 +20,8 @@ function App() {
   const [exchange, setExchange] = useState('6.00');
 
   const fetchProducts = () => {
-    fetch('http://localhost:3000/products')
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
+    api.get('/products')
+      .then((response) => setProducts(response.data))
       .catch((error) => console.error("Erro ao buscar:", error));
   };
 
@@ -42,23 +42,17 @@ function App() {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (response.ok) {
-        alert('Produto cadastrado com sucesso!');
-        fetchProducts();
-        setName('');
-        setCost('');
-        setShipping('');
-      } else {
-        alert('Erro ao cadastrar. Verifique os dados.');
-      }
+      await api.post('/products', payload);
+      
+      alert('Produto cadastrado com sucesso!');
+      fetchProducts();
+      setName('');
+      setCost('');
+      setShipping('');
+      
     } catch (error) {
       console.error("Erro ao salvar:", error);
+      alert('Erro ao cadastrar. Verifique os dados.');
     }
   };
 
@@ -68,18 +62,11 @@ function App() {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/products/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        fetchProducts();
-      } else {
-        alert("Erro ao excluir.");
-      }
+      await api.delete(`/products/${id}`);
+      fetchProducts();
     } catch (error) {
       console.error("Erro:", error);
-      alert("Erro de conexão.");
+      alert("Erro ao excluir ou erro de conexão.");
     }
   };
 
@@ -92,12 +79,9 @@ function App() {
         </h1>
       </header>
 
-      {}
       <div className="main-container">
-        
         <div className="content-grid">
           
-          {}
           <div className="card">
             <h2 style={{ marginTop: 0 }}>Novo Produto</h2>
             <form onSubmit={handleSubmit} className="form-grid">
@@ -140,7 +124,6 @@ function App() {
             </form>
           </div>
 
-          {}
           <div>
             <h2 style={{ marginTop: 0 }}>Lista de Produtos Cadastrados ({products.length})</h2>
             
