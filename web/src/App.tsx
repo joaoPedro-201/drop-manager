@@ -20,6 +20,7 @@ function App() {
   const [exchange, setExchange] = useState('6.00');
 
   const fetchProducts = () => {
+    // Note que não usamos mais "fetch" e nem "localhost"
     api.get('/products')
       .then((response) => setProducts(response.data))
       .catch((error) => console.error("Erro ao buscar:", error));
@@ -42,6 +43,7 @@ function App() {
     };
 
     try {
+      // Usando api.post
       await api.post('/products', payload);
       
       alert('Produto cadastrado com sucesso!');
@@ -62,6 +64,7 @@ function App() {
     }
 
     try {
+      // Usando api.delete
       await api.delete(`/products/${id}`);
       fetchProducts();
     } catch (error) {
@@ -72,7 +75,6 @@ function App() {
 
   return (
     <div>
-      {}
       <header className="app-header">
         <h1 className="app-title">
           <span>📦</span> DropManager
