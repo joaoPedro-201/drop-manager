@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import './App.css';
-import api from './services/api'; 
+import api from './services/api'; // <--- IMPORTANTE: Estamos importando a conexão correta aqui
 
 interface Product {
   id: string;
@@ -19,8 +19,9 @@ function App() {
   const [margin, setMargin] = useState('30');
   const [exchange, setExchange] = useState('6.00');
 
+  // BUSCAR PRODUTOS
   const fetchProducts = () => {
-    // Note que não usamos mais "fetch" e nem "localhost"
+    // Substituimos "fetch('localhost...')" por "api.get('/products')"
     api.get('/products')
       .then((response) => setProducts(response.data))
       .catch((error) => console.error("Erro ao buscar:", error));
@@ -30,6 +31,7 @@ function App() {
     fetchProducts();
   }, []);
 
+  // SALVAR PRODUTO
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -43,7 +45,7 @@ function App() {
     };
 
     try {
-      // Usando api.post
+      // Substituimos o fetch pelo api.post
       await api.post('/products', payload);
       
       alert('Produto cadastrado com sucesso!');
@@ -58,13 +60,14 @@ function App() {
     }
   };
 
+  // DELETAR PRODUTO
   const handleDelete = async (id: string) => {
     if (!window.confirm("Tem certeza que deseja excluir este produto?")) {
       return;
     }
 
     try {
-      // Usando api.delete
+      // Substituimos o fetch pelo api.delete
       await api.delete(`/products/${id}`);
       fetchProducts();
     } catch (error) {
