@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import './App.css';
-import api from './services/api'; // <--- IMPORTANTE: Estamos importando a conexão correta aqui
+import api from './services/api';
 
 interface Product {
   id: string;
@@ -21,7 +21,6 @@ function App() {
 
   // BUSCAR PRODUTOS
   const fetchProducts = () => {
-    // Substituimos "fetch('localhost...')" por "api.get('/products')"
     api.get('/products')
       .then((response) => setProducts(response.data))
       .catch((error) => console.error("Erro ao buscar:", error));
@@ -45,7 +44,6 @@ function App() {
     };
 
     try {
-      // Substituimos o fetch pelo api.post
       await api.post('/products', payload);
       
       alert('Produto cadastrado com sucesso!');
@@ -67,7 +65,6 @@ function App() {
     }
 
     try {
-      // Substituimos o fetch pelo api.delete
       await api.delete(`/products/${id}`);
       fetchProducts();
     } catch (error) {
