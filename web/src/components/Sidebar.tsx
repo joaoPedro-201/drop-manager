@@ -1,4 +1,4 @@
-import { LayoutDashboard, PackagePlus, Boxes, TrendingUp, Menu } from 'lucide-react';
+import { LayoutDashboard, Boxes, TrendingUp } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
