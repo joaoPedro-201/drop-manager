@@ -11,6 +11,10 @@
 
 ---
 
+## 📸 Preview
+
+![Dashboard do Projeto](./dropfoto.png)
+
 ---
 
 ## 🌐 Acesso Online
