@@ -21,7 +21,7 @@
 
 O projeto está rodando em produção! Você pode acessar a versão mais recente através do link abaixo:
 
-👉 **[https://drop-manager.vercel.app](https://drop-manager.vercel.app)**
+👉 **[https://drop-manager0.vercel.app](https://drop-manager0.vercel.app)**
 
 ---
 
