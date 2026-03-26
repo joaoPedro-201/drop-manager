@@ -111,14 +111,3 @@ O Frontend rodará em: http://localhost:5173
 ```
 
 ---
-
-🔮 Roadmap (Próximos Passos)
-[ ] Autenticação: Login de usuário (JWT) para proteger o acesso.
-
-[ ] Relatórios: Gráficos de evolução de lucro e vendas.
-
-[ ] Edição: Funcionalidade de editar produtos já cadastrados.
-
-[ ] Integração: Conexão com APIs de cotação de dólar em tempo real.
-
----
